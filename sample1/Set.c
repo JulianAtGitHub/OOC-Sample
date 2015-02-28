@@ -1,0 +1,82 @@
+
+#include <stdlib.h>
+#include <assert.h>
+
+#include "new.h"
+#include "Object.h"
+#include "Set.h"
+
+#if ! defined MANY || MANY < 1
+#define MANY 10
+#endif
+
+const void * Object;
+const void * Set;
+
+static int heap [MANY] = {0, };
+
+void * alloc (const void *type, ...) {
+	int * p;
+	for (p = heap + 1; p < heap + MANY; ++ p) {
+		if (! * p) 
+			break;
+	}
+	assert(p < heap + MANY);
+	* p = MANY;
+	return p;
+}
+
+void dealloc (void * _item) {
+	int *item = _item;
+	if (item) {
+		assert(item > heap && item < heap + MANY);
+		* item = 0;
+	}
+}
+
+int differ (const void * a, const void * b) {
+	return a != b;
+}
+
+void * add (void * _set, const void * _element) {
+	int * set = _set;
+	const int * element = _element;
+
+	assert(set > heap && set < heap + MANY);
+	assert(* set == MANY);
+	assert(element > heap && element < heap + MANY);
+
+	if (* element == MANY)
+		* (int *) element = set - heap;
+	else
+		assert(* element == set - heap);
+
+	return (void *) element;
+}
+
+void * find(const void * _set, const void * _element) {
+	const int * set = _set;
+	const int * element = _element;
+
+	assert(set > heap && set < heap + MANY);
+	assert(* set == MANY);
+	assert(element > heap && element < heap + MANY);
+	assert(* element);
+
+	return * element == set - heap ? (void *) element : 0;
+}
+
+int contains (const void * _set, const void * _element) {
+	return find(_set, _element) != 0;
+}
+
+void * drop(void * _set, const void * _element) {
+	int * element = find(_set, _element);
+
+	if (element)
+		* element = MANY;
+	return (void *) element;
+}
+
+
+
