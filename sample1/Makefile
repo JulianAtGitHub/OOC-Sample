@@ -1,10 +1,13 @@
 
-cc=clang
-binary=sample1
-objects=Set.o main.o
+CC = gcc
+binary = sample1
+objects = Set.o main.o
+
+# generate debug symbol with option -g
+CFLAGS = -g
 
 $(binary): $(objects)
-	cc -o $(binary) $(objects)
+	CC -o $(binary) $(objects)
 Set.o: Set.c
 main.o: main.c
 
