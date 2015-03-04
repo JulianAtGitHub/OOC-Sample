@@ -13,3 +13,6 @@ main.o: main.c
 
 clean:
 	rm $(binary) $(objects)
+
+cleanMinGW:
+	rm $(binary).exe $(objects)
